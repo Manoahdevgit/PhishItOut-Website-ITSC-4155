@@ -7,13 +7,25 @@ const siteData = {
     "example-scam.com": { score: 12, risk: "high",   notes: "Multiple threat detectors flagged this site. Avoid entering any personal information." }
 };
 
+function isValidWebsiteInput(input) {
+    const domainPattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
+    return domainPattern.test(input);
+}
+
 function checkSite() {
-    const input = document.getElementById("urlInput").value.trim().toLowerCase();
+    const rawInput = document.getElementById("urlInput").value.trim().toLowerCase();
+    const input = rawInput.replace(/^https?:\/\//, "").replace(/^www\./, "").split("/")[0];
     const resultsBox = document.getElementById("results");
 
-    if (!input) {
+    if (!rawInput) {
         resultsBox.className = "results-box";
         resultsBox.innerHTML = `<p class="result-no-data">Please enter a website to check.</p>`;
+        return;
+    }
+
+    if (!isValidWebsiteInput(rawInput)) {
+        resultsBox.className = "results-box";
+        resultsBox.innerHTML = `<p class="result-no-data">Please enter a valid website URL, like google.com.</p>`;
         return;
     }
 
